@@ -1,0 +1,148 @@
+jalankan rosmaster
+roscore
+
+detect publisher vision untuk ROS
+rosrun nama_workspace nama_file --letak_hasil_training --sumber_openCV 
+rosrun rodar_v1 visionRodar.py --weights /home/bmrt-minipc/ros_ws/src/rodar_v1/src/best2bola.pt --source 0 --conf-thres 0.85
+
+jalankan ros subscriber
+rosrun nama_workspace nama_file
+rosrun rodar_v1 autonomous_sub.py
+
+jalankan rosserial
+rosrun rosserial_python serial_node.py _baud=115200 _port:=/dev/ttyUSB0
+
+jalankan rostopic untuk melihat isi dari topic
+rostopic list
+
+jalankan topic yang ada di list
+rostopic echo /nama topic
+rostopic echo /imu_topic
+
+jalankan ros_client untuk membuat ros_lib dari msg
+rosrun rosserial_client make_libraries letak_file_ros_lib
+rosrun rosserial_client make_libraries /home/bmrt-minipc/Arduino/libraries/ belajar
+
+jalankan roslaunch
+roslaunch nama_workspace nama_file_launch
+roslaunch belajar motor.launch
+
+Detect live in yolov5
+python3 nama_file --weights nama_file_training --sumber_openCV 
+python3 visionRodar.py --weights best2bola.pt --source 0 --conf-thres 0.50
+
+Training di yolov5 :
+python3 train.py --img 416 --batch 2 --epochs 2000 --data /home/bmrt/dataset/rodar/data.yaml  --weights yolov5n.pt
+
+training in SSD
+python3 train_ssd.py --dataset-type=voc --data=data/{modelname}/ --model-dir=models/{modelname} --batch-size=2 --workers=5 --epochs=500
+
+detect live in SSD
+python3 nama_file mb1-ssd model_dg_epoch_terkecil label_class sumber_openCV
+python3 publisher-local.py mb1-ssd models/model4/mb1-ssd-Epoch-906-Loss-0.23103199899196625.pth models/model4/labels.txt 0  
+python3 vision_rodar2.py mb1-ssd models/model12/mb1-ssd-Epoch-1517-Loss-1.1998317448193567.pth models/model12/labels.txt 0
+
+convert video ke foto
+ffmpeg -i letak_video -vf fps=8 -q:v kualitas_hasil_konversi letak_hasil_convert
+ffmpeg -i Videos/Webcam/labelbola.webm -vf fps=8 -q:v 1 Dataset/data%04d.jpg
+
+
+
+Install ROS 1 (Noetic)
+    1. Buka wiki ros, kemudian install. Pilih yg ros 1 (neotik) krn jenis ubuntu 20
+Konfigurasi file CMakeLists.txt & package.xml
+    1. Pada bagian CMakeLists.txt, karena kita akan mengirim lebih dari 1 pesan (ada box merah dan hijau, center x merah dan hijau) maka tambahkan messege_generation dibagian find package catkin required Component dan file package.xml (kalau bingung, ikutin yg ada di rodar_v1)
+    2. Dibagian package.xml, dibagian build depend, export depend tambahkan message_generation. Dan di exec depend tambahkan nya message_runtime
+Command di ros
+    1. Roscore : mengkoordinasi komunikasi antara berbagai komponen dalam sistem ros. Tanpa roscore node ros tidak akan dapat berkomunikasi satu sama lain. Roscore wajib dijalankan sebelum jalankan program utama jika bukan menggunakan roslaunch
+    2. Kalau mau jalanin program ROS, jalanin dlu roscore. Kemudian jalankan program lain nya dgn awal command "rosrun"
+Membuat ros_ws(isinya itu ada src, devel dan build) 
+    1. jalankan perintah mkdir -p ~/ros_ws/src. ini akan membuat directory src (source) di ros_ws
+    2. jalankan perintah catkin_make. ini akan membuat directoriy build dan devel. dan akan membangun semua paket ROS di workspace sehingga dapat menjalankan node-node ROS dan menggunakan fungsionalitas yang mereka sediakan.
+Membuat workspace ros
+    1. Kemudian Buat workspace utk rodar didalam direktori src. Caranya : catkin_create_pkg rodar_v1 std_msgs rospy roscpp 
+    2. Isinya dari rodar_v1  include, msg, src, CMakeLists.txt, dan package.xml. setiap mau buat 1 paket program utk robot, harus buat 1 workspace jika cara kerja robotnya sangat berbeda
+Membuat setup alamat
+    1. Untuk membuat direktori setup.bash di devel : source /home/bmrt-minipc/ros_ws/devel/setup.bash 
+    2. untuk buka bashrc, supaya ketika mau run ga perlu masukin alamat lengkap nya si file program : sudo gedit ~/.bashrc . Masukin 2 ini tanpa mengganggu kalimat2 lain yg sudah ada. Letakkan paling bawah : 
+    a. source /opt/ros/noetic/setup.bash
+    b. source /home/bmrt-minipc/ros_ws/devel/setup.bash
+Memberi izin program untuk program bahasa python
+    1. chmod +x publisher.py untuk memberi izin menjalankan file publisher.py
+    2. Harus di chmod supaya bisa run. Nanti kalo udh di chmod bakal biru tulisan nya
+    3. Untuk mengecek ketikkan perintah ls
+
+Menampilkan grafik
+    1. Ketik : rqt_graph maka akan muncul grafik komunikasi antara publisher, topic dan subscriber. Tapi bisa buka rqt_graph hanya saat program sedang berjalan atau running
+Custom message untuk komunikasi rosserial
+    1. Buat package arduino_lib. Caranya buka terminal dan jalankan :
+ros_lib rosrun rosserial_client make_libraries home/bmrt-minipc/Arduino/libraries belajar
+    2. Buka folder Arduino_lib kemudian ambil dan pindahkan package yang ada custom message nya ke dalam library rosserial - src - belajar (dalam contoh package belajar) 
+    3. Kemudian buka program Arduino. Include message nya ganti jadi nama package yang ada custom message nya. Contoh : #include <belajar/vision.h>
+    4. Subscriber di miniPC di bagian vision callback nya harus sama kaya yg di custome message. (data.data nya di ganti sesuai custom message)
+    5. Kalau dia muncul di terminal : unable to sync. Ganti baudrate di Arduino hardware jadi 115200. Buat sama semua nilai baudrate
+Minipc menerima data dari arduino
+    1. Buka ros tutorial subscriber. Liat contoh disitu
+    2. Buat nama topic subscriber nya
+    3. Buat nama topik yang sesuai dengan yang ada di arduino IDE
+    4. Buat type data nya harus sama dg yg ada di arduino
+    5. Cara jalanin subscriber nya diterminal itu : ros run belajar subscriber_imu.py
+Kirim data imu gy25 (contoh data dari arduino ke minipc)
+    1. Buat program utk sensor dulu
+    2. Kalau berhasil dan nilai muncul di serial monitor, buat jadi publisher(caranya liat di rosserial_arduino tutorial
+    3. Jika dijalankan di terminal muncul masalah 'unable to sync with device... ' ubah settingan nya di library directory ros.h (caranya liat di rosserial problem esp32)
+    4. Pastikan kalau mau pakai serial.begin utk hardware buatnya itu pakai : 
+Serial.begin(115200);
+nh.getHardware() ->setBaud(115200) ;
+    5. Kalau mau run yang ada nh.getHardware() ->setBaud(115200) ;
+Caranya : ros run rosserial_python serial_node.py _port:=/dev/ttyUSB0 _baud:=115200
+    6. Pastikan baudrate nya sama
+    7. Kalau mau jalanin harus ros run satu persatu. Mulai dari roll, pitch, yaw(program arduino yg imu_GY25)
+
+Cara roslaunch
+Roslaunch :
+    1. Buat direktori untuk simpan arduino dan launch
+    2. Di file launch masukan semua node untuk program arduino dan nama file python nya
+    3. Cara jalanin nya : roslaunch belajar <nama file> (untuk contoh nama file diganti dengan motor.launch)
+Cara membuat package di ros
+    1. Buka direktori src kemudian Ketik catkin_create_pkg (nama directori) stdmsg rospy roscpp
+    2. Buka direktori sesuai (nama direktori) kemudian mkdir msg. Ini akan membuat direktori baru bernama msg
+    3. Buka direktori msg kemudian ketik touch (nama file utk message generation) contohnya : vision.msg. isi nama yg akan dikirim apa aja
+    4. Pada bagian CMakeLists.txt, karena kita akan mengirim lebih dari 1 pesan (ada box merah dan hijau, center x merah dan hijau) maka tambahkan messege_generation dibagian find package catkin required Component dan file package.xml (kalau bingung, ikutin yg ada di rodar_v1)
+    5. Dibagian package.xml, dibagian build depend, export depend tambahkan message_generation. Dan di exec depend tambahkan nya message_runtime
+    6. Balik ke direktori awal. (Contohnya ros_ws) kemudian ketikan catkin_make supaya paket ros diakui dan diaplikasikan dg benar
+    7. Buat codingan yg disusun berdasarkan cara kerja ros. Cek di rodar_v1
+
+ROS custom_msg
+    1. Buat custom_msg di workspace ros (belajar - msg - imu.msg)
+    2. Convert ke ros_lib. Caranya : rosrun rosserial_client make_libraries <path alamat dimana ros_lib akan disimpan> /home/bmrt-minipc/Arduino/libraries/ <nama workspace custom_msg itu di simpan> belajar
+    3. Pindahkan directory belajar yg ada di ros_lib ke rosserial arduino-src
+    4. Hapus ros_lib supaya ga nabrak antara rosserial dan ros_lib
+    5. Masukkan custom_msg ke Arduino. #include <belajar/imu.h>
+    6. Sesuaikan untuk inisialisasi rosserial nya di Arduino berdasarkan custom_msg
+    7. Jalankan roscore di terminal
+    8. Buka workspace ros (cd ros_ws) jalankan rosrun rosserial_python serial_node.py _port:=/dev/ttyUSB0 _baud:=115200
+    9. Kalau mau cek topic ros di rosserial jalankan ros topic list. Kemudian jalankan rostopic echo <nama topic> /chatter
+    10. Buat progam subscriber di minipc. Kemudian jalankan rosrun <directory> belajar <nama program> sub_imu_custom.py
+    11. Kalau udah oke ga perlu panggil si publisher Arduino. Langsung jalankan subscriber aja. Karena si Arduino jatoh nya jadi topic atau yang menampilkan data aja
+    12. Buat subscriber jadi pesan yang bisa di olah dengan variable global
+
+Cara ngebuat port static port :
+    1. Buka direktori : /etc/udev/rules.d
+    2. Ketikkan : ls. Kemudian pilih apa yg mau di buat static port nya
+    3. Contohnya : sudo gedit arduino.rules
+    4. Kemudian ganti isi dari idProduct, idVendor dan serial kemudian save
+    5. Balik ke direktori awal : ketik cd
+    6. Kemudian sudo udevadm control --reload-rules && sudo udevadm trigger
+    7. Untuk cek ketik : ls /dev/e
+    8. Kalau udah ada nanti bisa langsung jalanin
+    9. Utk cek id vendor ketik : udevadm info -a /dev/ttyUSB0. USB nya itu sesuaikan sama punya kita 1 atau 0 gitu
+
+Cara publish data melalui FTDI :
+1. Install Rosserial_Arduino_Library. Kalau error, pergi ke direktori ros - buka msg.h , disana ganti cstring menjadi string.h dan hapus sdt:: (perhatikan yg ada memcpy)
+2. Pergi ke src, ganti ros.h dan arduino_hardware.h sesuai yang ada di link ros wiki
+3. Pastikan serial di arduino_hardware.h itu nilainya sama. Pada contoh menggunakan serial3
+Serial pada ftdi pakai yg paling tinggi 500000. Serial3(500000)
+
+cara menjalankan rosserial arduino :
+rosrun rosserial_python serial_node.py /dev/ttyUSB0 _baud:=500000
