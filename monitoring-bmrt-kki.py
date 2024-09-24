@@ -4,48 +4,24 @@ import matplotlib.pyplot as plt
 import time
 import os
 
-st.markdown("""
-    <style>
-        [data-testid="stSidebar"] {
-            background-color: #ffffff;
-            background-image: linear-gradient(#2e7bcf, #2ca58d);
-            color: black;
-        }
-        .header-text {
-            text-align: center;
-            color: #ffffff;
-            background-color: #2e7bcf;
-            padding: 13px; 
-            border-radius: 15px;
-            margin-bottom: 10px; 
-            border: 2px solid black;
-            font-size: 16px;
-        }
-        [data-testid="stMetricValue"] {
-            font-size: 16px;
-        }
-        [data-testid="stMetricLabel"] {
-            font-size: 12px;
-        }
-    </style>
-    """, unsafe_allow_html=True)
+st.set_page_config(page_title="Monitoring-kki-2024", page_icon="🌍", layout="wide")
 
-# Sidebar
-path = st.sidebar.selectbox("Pilih Lintasan", ["Lintasan A", "Lintasan B"])
+#sidebar
+st.sidebar.markdown('<h4 class="sidebar-text">NAVIGASI LINTASAN</h4>', unsafe_allow_html=True)
+path = st.sidebar.radio("", ["Lintasan A ⚓", "Lintasan B ⚓"])
 start_monitoring_button = st.sidebar.button("START BUTTON", key="start_monitoring_button")
 
-col1, col2, col3, col4 = st.columns([1,2,2,1])
+col1, col2, col3, col4 = st.columns([1,3,3,1])
 with col1:
-    st.image('logo.jpeg', width=100)
+    st.image('logo.jpeg', width=105)
 with col2:
     st.markdown("<h6 class='header-text'> BARELANG MARINE ROBOTICS TEAM </h6>", unsafe_allow_html=True)
 with col3:
     st.markdown("<h6 class='header-text'> POLITEKNIK NEGERI BATAM </h6>", unsafe_allow_html=True)
 with col4:
-    st.image('Nereus Polos.png', width=110)
+    st.image('polibatamLogo.jpeg', width=120)
 
-
-st.markdown("<h6 class='header-text'>GEO-TAG INFOS</h6>", unsafe_allow_html=True)
+st.markdown("<h6 class='judul-text'>GEO-TAG INFOS</h6>", unsafe_allow_html=True)
 col1, col2, col3, col4 = st.columns(4)
 day_placeholder = col1.metric("Day", "Loading...")
 date_placeholder = col2.metric("Date", "Loading...")
@@ -57,7 +33,7 @@ sog_kmh_placeholder = col2.metric("SOG [Km/h]", "Loading...")
 cog_placeholder = col3.metric("COG", "Loading...")
 position_placeholder = col4.metric("Position [x,y]", "Loading...")
 
-st.markdown("<h5 class='header-text'>TRAJECTORY MAP</h5>", unsafe_allow_html=True)
+st.markdown("<h5 class='judul-text'>TRAJECTORY MAP</h5>", unsafe_allow_html=True)
 
 # Backend URL
 FLASK_URL = 'http://127.0.0.1:5000/random-data'
@@ -87,7 +63,7 @@ def koordinat_kartesius(path):
     ax.set_xticks(range(0, 2600, 100))
     ax.set_yticks(range(0, 2600, 100))
     ax.grid(True)
-    if path == "Lintasan A":
+    if path == "Lintasan A ⚓":
         ##Titik nol : x = 2185, y = 115
         rectangle = plt.Rectangle((2100, 65), 170, 100, color='red', fill=True)
         red_positions, green_positions = posisi_floating_ball("A")
@@ -101,7 +77,7 @@ def koordinat_kartesius(path):
         small_green_rectangle = plt.Rectangle((300, 620), 100, 50, color='green', fill=True)
         ax.add_patch(small_green_rectangle)
 
-    elif path == "Lintasan B":
+    elif path == "Lintasan B ⚓":
         ##Titik nol : x = 335, y = 115
         rectangle = plt.Rectangle((250, 65), 170, 100, color='green', fill=True)
         red_positions, green_positions = posisi_floating_ball("B")
@@ -127,8 +103,10 @@ def koordinat_kartesius(path):
     return fig, ax
 
 def hasil_foto_surface():
-    surface_dir = os.path.expanduser("~/ros_ws/src/train_asv/src/surface_box")
-    surface_file = "sbox_1.jpg" 
+    #surface_dir = os.path.expanduser("~/ros_ws/src/train_asv/src/surface_box")
+    surface_dir = os.path.expanduser("~/Downloads")
+    #surface_file = "sbox_1.jpg" 
+    surface_file = "poltek.png" 
     surface_path = os.path.join(surface_dir, surface_file)
     
     if os.path.isfile(surface_path):
@@ -171,6 +149,7 @@ def posisi_floating_ball(path):
         green_positions = [(260, 855), (340, 1160), (195, 1465), (980, 2230), (1140, 2230),
                            (1300, 2230), (1460, 2230), (2070, 1715), (2170, 1310), (2170, 960)]
     return red_positions, green_positions
+    
 
 
 plot_placeholder = st.empty()
@@ -240,3 +219,86 @@ if start_monitoring_button:
         
 else:
     gambar_lintasan_lomba()
+    
+page_bg_img = f"""
+<style>
+[data-testid="stAppViewContainer"] > .main {{
+background-color: #CDDFEF;
+background-size: cover;
+background-position: center center;
+background-repeat: no-repeat;
+background-attachment: local;
+}}
+[data-testid="stHeader"] {{
+background: rgba(0,0,0,0);
+}}
+</style>
+"""
+st.markdown(page_bg_img, unsafe_allow_html=True)
+
+st.markdown("""
+    <style>
+        [data-testid="stSidebar"] {
+            background-color: #65A7D3;
+            color: #00647B;
+            font-weight: bold; 
+        }
+        .header-text {
+            text-align: center;
+            color: #ffff;
+            background-color: #3A6E8F;
+            padding: 13px; 
+            border-radius: 15px;
+            margin-bottom: 10px; 
+            border: 2px solid white;
+            font-size: 25px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .judul-text {
+            text-align: center;
+            color: white;
+            background-color: #65A7D3;
+            padding: 10px; 
+            border-radius: 15px;
+            margin-bottom: 10px; 
+            border: 2px solid white;
+            font-size: 18px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        [data-testid="stMetricValue"] {
+            font-size: 16px;
+        }
+        [data-testid="stMetricLabel"] {
+            font-size: 12px;
+        }
+        .stButton > button {
+            background-color: #4CAF50; 
+            color: #ffff;    
+            border: 2px solid white;
+            font-weight: bold; 
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+st.markdown(
+    """
+    <style>
+    .sidebar-text {
+            text-align: center;
+            color: #3A6E8F;
+            background-color: #B2D3EB;
+            padding: 13px; 
+            border-radius: 15px;
+            margin-bottom: 10px; 
+            border: 2px solid white;
+            font-size: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            margin-bottom: 3px;
+        }
+    </style>
+    """, 
+    unsafe_allow_html=True
+)
+
+
+
