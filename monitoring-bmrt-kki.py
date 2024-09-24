@@ -89,10 +89,10 @@ def koordinat_kartesius(path):
     ax.grid(True)
     if path == "Lintasan A":
         ##Titik nol : x = 2185, y = 115
-        rectangle = plt.Rectangle((2080, 65), 170, 100, color='red', fill=True)
+        rectangle = plt.Rectangle((2100, 65), 170, 100, color='red', fill=True)
         red_positions, green_positions = posisi_floating_ball("A")
 
-        rectangle = plt.Rectangle((2080, 65), 170, 100, color='red', fill=True)
+        rectangle = plt.Rectangle((2100, 65), 170, 100, color='red', fill=True)
         ax.add_patch(rectangle)
 
         blue_rectangle = plt.Rectangle((520, 300), 100, 50, color='blue', fill=True)
