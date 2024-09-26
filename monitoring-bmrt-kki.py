@@ -19,19 +19,18 @@ with col2:
 with col3:
     st.markdown("<h6 class='header-text'> POLITEKNIK NEGERI BATAM </h6>", unsafe_allow_html=True)
 with col4:
-    st.image('polibatamLogo.jpeg', width=120)
+    st.image('polibatamLogo.jpeg', width=110)
 
 st.markdown("<h6 class='judul-text'>GEO-TAG INFOS</h6>", unsafe_allow_html=True)
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4, col5, col6, col7, col8 = st.columns([1,1,1,2,1,1,1,1])
 day_placeholder = col1.metric("Day", "Loading...")
 date_placeholder = col2.metric("Date", "Loading...")
 time_placeholder = col3.metric("Time", "Loading...")
 coordinate_placeholder = col4.metric("Coordinate", "Loading...")
-col1, col2, col3, col4 = st.columns(4)
-sog_knot_placeholder = col1.metric("SOG [Knot]", "Loading...")
-sog_kmh_placeholder = col2.metric("SOG [Km/h]", "Loading...")
-cog_placeholder = col3.metric("COG", "Loading...")
-position_placeholder = col4.metric("Position [x,y]", "Loading...")
+sog_knot_placeholder = col5.metric("SOG [Knot]", "Loading...")
+sog_kmh_placeholder = col6.metric("SOG [Km/h]", "Loading...")
+cog_placeholder = col7.metric("COG", "Loading...")
+position_placeholder = col8.metric("Position [x,y]", "Loading...")
 
 st.markdown("<h5 class='judul-text'>TRAJECTORY MAP</h5>", unsafe_allow_html=True)
 
@@ -57,12 +56,13 @@ def judul_hasil_foto():
 
 def koordinat_kartesius(path):
     
-    fig, ax = plt.subplots(figsize=(13, 13))
+    fig, ax = plt.subplots(figsize=(3, 3))  # Kurangi ukuran gambar
     ax.set_xlim(0, 2500)
     ax.set_ylim(0, 2500)
-    ax.set_xticks(range(0, 2600, 100))
-    ax.set_yticks(range(0, 2600, 100))
+    ax.set_xticks(range(0, 2600, 500))
+    ax.set_yticks(range(0, 2600, 500))
     ax.grid(True)
+
     if path == "Lintasan A ⚓":
         ##Titik nol : x = 2185, y = 115
         rectangle = plt.Rectangle((2100, 65), 170, 100, color='red', fill=True)
@@ -103,10 +103,10 @@ def koordinat_kartesius(path):
     return fig, ax
 
 def hasil_foto_surface():
-    #surface_dir = os.path.expanduser("~/ros_ws/src/train_asv/src/surface_box")
-    surface_dir = os.path.expanduser("~/Downloads")
-    #surface_file = "sbox_1.jpg" 
-    surface_file = "poltek.png" 
+    surface_dir = os.path.expanduser("~/kki2024_ws/surface_box")
+    #surface_dir = os.path.expanduser("~/Downloads")
+    surface_file = "sbox_1.jpg" 
+    #surface_file = "poltek.png" 
     surface_path = os.path.join(surface_dir, surface_file)
     
     if os.path.isfile(surface_path):
@@ -118,7 +118,7 @@ def hasil_foto_surface():
         return None, None
         
 def hasil_foto_underwater():
-    underwater_dir = os.path.expanduser("~/ros_ws/src/train_asv/src/underwater_box")
+    underwater_dir = os.path.expanduser("~/kki2024_ws/underwater_box")
     underwater_file = "ubox_1.jpg"  
     underwater_path = os.path.join(underwater_dir, underwater_file)
     
@@ -168,7 +168,7 @@ def update_plot():
     data = data_backend()
     if data:
         try:
-            if path == "Lintasan B":
+            if path == "Lintasan B ⚓":
                 x = data.get('x') + 335
                 y = data.get('y') + 115
             
@@ -177,13 +177,14 @@ def update_plot():
                 y = data.get('y') + 115
 
 
-            sog_knot = data.get('sog_knot')
-            sog_kmh = data.get('sog_kmh')
+            knot = data.get('sog_knot')
+            km_per_hours = data.get('sog_kmh')
             cog = data.get('cog')
             day = data.get('day')
             date = data.get('date')
             time_value = data.get('time')
-            coordinate = data.get('coordinate')
+            lat = data.get('coordinate1')
+            lon = data.get('coordinate1')
 
             trajectory_x.append(x)
             trajectory_y.append(y)
@@ -191,13 +192,13 @@ def update_plot():
             ax.relim()
             ax.autoscale_view()
 
-            sog_knot_placeholder.metric("SOG [Knot]", f"{sog_knot} kt")
-            sog_kmh_placeholder.metric("SOG [Km/h]", f"{sog_kmh} km/h")
+            sog_knot_placeholder.metric("SOG [Knot]", f"{knot} kt")
+            sog_kmh_placeholder.metric("SOG [Km/h]", f"{km_per_hours} km/h")
             cog_placeholder.metric("COG", f"{cog}°")
             day_placeholder.metric("Day", day)
             date_placeholder.metric("Date", date)
             time_placeholder.metric("Time", time_value)
-            coordinate_placeholder.metric("Coordinate", coordinate)
+            coordinate_placeholder.metric("Coordinate", f" S{lat}, E{lon}")
             position_placeholder.metric("Position [x,y]",f"{x}, {y}")
 
             plot_placeholder.pyplot(fig)
@@ -210,6 +211,8 @@ def update_plot():
 
 # Main loop
 if start_monitoring_button:
+    st.session_state.monitoring_active = True
+    st.sidebar.markdown('<style>div.stButton > button {background-color: #2E7431; color: white;}</style>', unsafe_allow_html=True)
     st.text("Monitoring started...")
     while True:
         update_plot()
@@ -223,7 +226,7 @@ else:
 page_bg_img = f"""
 <style>
 [data-testid="stAppViewContainer"] > .main {{
-background-color: #CDDFEF;
+background-color: #b2d3eb;
 background-size: cover;
 background-position: center center;
 background-repeat: no-repeat;
@@ -239,19 +242,25 @@ st.markdown(page_bg_img, unsafe_allow_html=True)
 st.markdown("""
     <style>
         [data-testid="stSidebar"] {
-            background-color: #65A7D3;
-            color: #00647B;
+            background-color: #CDDFEF;
+            color: #ffff;
             font-weight: bold; 
         }
+        .css-1lcbmhc > div > label {
+        color: white !important; /* Setting text color to white */
+        font-family: 'Arial', sans-serif; /* Change to any other desired font */
+        font-weight: bold; /* Making the font bold */
+    }
+
         .header-text {
             text-align: center;
             color: #ffff;
             background-color: #3A6E8F;
-            padding: 13px; 
+            padding: 10px; 
             border-radius: 15px;
-            margin-bottom: 10px; 
+            margin-bottom: 5px; 
             border: 2px solid white;
-            font-size: 25px;
+            font-size: 24px;
             font-family: 'Courier New', Courier, monospace;
         }
         .judul-text {
@@ -277,6 +286,12 @@ st.markdown("""
             border: 2px solid white;
             font-weight: bold; 
         }
+        .container {
+            background-color: white; /* Mengatur latar belakang kontainer menjadi putih */
+            padding: 20px;          /* Menambahkan padding */
+            border-radius: 10px;    /* Mengatur sudut agar melengkung */
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Menambahkan bayangan untuk efek kedalaman */
+        }
     </style>
     """, unsafe_allow_html=True)
 
@@ -285,11 +300,10 @@ st.markdown(
     <style>
     .sidebar-text {
             text-align: center;
-            color: #3A6E8F;
-            background-color: #B2D3EB;
+            color: #FFFF;
+            background-color: #65A7D3;
             padding: 13px; 
             border-radius: 15px;
-            margin-bottom: 10px; 
             border: 2px solid white;
             font-size: 20px;
             font-family: 'Courier New', Courier, monospace;
@@ -299,6 +313,8 @@ st.markdown(
     """, 
     unsafe_allow_html=True
 )
+    
+
 
 
 
