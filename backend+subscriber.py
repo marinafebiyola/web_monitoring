@@ -2,30 +2,34 @@
 from flask import Flask, jsonify
 import threading
 import rospy
-from train_asv.msg import lokalisasi
+from kki_2024.msg import lokalisasi
 from datetime import datetime
 
-# Global variables to store data
-nilai_x = nilai_y = 0
+
+nilai_x = nilai_y = lat = lon = knot = km_per_hours = cog = 0
 app = Flask(__name__)
 
 # ROS callback function
 def lokalisasi_callback(data):
-    global nilai_x, nilai_y
+    global nilai_x, nilai_y, lat, lon, knot, km_per_hours, cog
     nilai_x = data.nilai_x
     nilai_y = data.nilai_y
-    # Print values of x and y whenever they are updated
-    print(f"Updated values - x: {nilai_x}, y: {nilai_y}")
+    lat = data.lat
+    lon = data.lon
+    knot = data.knot
+    km_per_hours = data.km_per_hours
+    cog = data.cog
+    print(f"x: {nilai_x}, y: {nilai_y}, lat: {lat}, lon: {lon}, knot1: {knot}, knot2: {km_per_hours}, cog: {cog}")
 
 def monitoring():
     rospy.init_node('monitoring', anonymous=True)
     rospy.Subscriber("sensor", lokalisasi, lokalisasi_callback)
-    rospy.spin()  # Keeps your node from exiting until the node has been shutdown
+    rospy.spin()  
 
 # Flask endpoint to get data
 @app.route('/random-data', methods=['GET'])
 def get_random_data():
-    # Generate date, day, and time
+    
     now = datetime.now()
     day = now.strftime("%a")
     date = now.strftime("%d/%m/%Y")
@@ -36,7 +40,12 @@ def get_random_data():
         'y': nilai_y,
         'day': day,
         'date': date,
-        'time': time_value   
+        'time': time_value,
+        'coordinate1' : lat,
+        'coordinate2' : lon,
+        'sog_knot': knot,
+        'sog_kmh': km_per_hours,
+        'cog': cog,
     }
     return jsonify(data)
 
