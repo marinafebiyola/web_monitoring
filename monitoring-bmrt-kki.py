@@ -56,11 +56,11 @@ def judul_hasil_foto():
 
 def koordinat_kartesius(path):
     
-    fig, ax = plt.subplots(figsize=(3, 3))  # Kurangi ukuran gambar
+    fig, ax = plt.subplots(figsize=(13, 13))  # Kurangi ukuran gambar
     ax.set_xlim(0, 2500)
     ax.set_ylim(0, 2500)
-    ax.set_xticks(range(0, 2600, 500))
-    ax.set_yticks(range(0, 2600, 500))
+    ax.set_xticks(range(0, 2600, 100))
+    ax.set_yticks(range(0, 2600, 100))
     ax.grid(True)
 
     if path == "Lintasan A ⚓":
@@ -171,11 +171,12 @@ def update_plot():
             if path == "Lintasan B ⚓":
                 x = data.get('x') + 335
                 y = data.get('y') + 115
-            
+                
             else:
                 x = data.get('x') + 2185
-                y = data.get('y') + 115
-
+                #y = data.get('y') + 115
+                y = data.get('y') + 300
+            
 
             knot = data.get('sog_knot')
             km_per_hours = data.get('sog_kmh')
@@ -183,7 +184,7 @@ def update_plot():
             day = data.get('day')
             date = data.get('date')
             time_value = data.get('time')
-            lat = data.get('coordinate1')
+            latt = data.get('coordinate1')
             lon = data.get('coordinate1')
 
             trajectory_x.append(x)
@@ -198,7 +199,7 @@ def update_plot():
             day_placeholder.metric("Day", day)
             date_placeholder.metric("Date", date)
             time_placeholder.metric("Time", time_value)
-            coordinate_placeholder.metric("Coordinate", f" S{lat}, E{lon}")
+            coordinate_placeholder.metric("Coordinate", f" S{latt}, E{lon}")
             position_placeholder.metric("Position [x,y]",f"{x}, {y}")
 
             plot_placeholder.pyplot(fig)
