@@ -41,7 +41,7 @@ position_placeholder = col8.metric("Position [x,y]", "Loading...")
 st.markdown("<h5 class='judul-text'>TRAJECTORY MAP</h5>", unsafe_allow_html=True)
 
 # Backend URL
-FLASK_URL = 'http://127.0.0.1:5000/random-data'
+FLASK_URL = 'http://127.0.0.1:5000/data-receive'
 
 
 def data_backend():
