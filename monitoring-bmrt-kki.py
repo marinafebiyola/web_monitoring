@@ -154,41 +154,44 @@ def posisi_floating_ball(path):
 #Visualisasi arah hadap kapal
 triangle_patch = None
 
-def draw_triangle(ax, x, y, cog):
+def heading_kapal(ax, x, y, yaw):
     global triangle_patch
 
     if triangle_patch is not None:
         triangle_patch.remove() 
         triangle_patch = None
 
-    angle = np.deg2rad(cog)
+    if yaw > 0:
+        yaw = 360 - yaw
+
+    angle = np.deg2rad(yaw) + np.pi / 2
     arrow_length = 35
     base_length = 40
+
     tip_x = x + arrow_length * np.cos(angle)
     tip_y = y + arrow_length * np.sin(angle)
 
-    left_x = tip_x - base_length * np.cos(angle + np.pi / 6)
-    left_y = tip_y - base_length * np.sin(angle + np.pi / 6)
-    right_x = tip_x - base_length * np.cos(angle - np.pi / 6)
-    right_y = tip_y - base_length * np.sin(angle - np.pi / 6)
+    left_x = tip_x - base_length * np.cos(angle + np.pi / 6)  
+    left_y = tip_y - base_length * np.sin(angle + np.pi / 6)  # Hitungan untuk titik kiri
+    right_x = tip_x - base_length * np.cos(angle - np.pi / 6)  
+    right_y = tip_y - base_length * np.sin(angle - np.pi / 6)  # Hitungan untuk titik kanan
 
-    triangle = np.array([[tip_x, tip_y], [left_x, left_y], [right_x, right_y], [tip_x, tip_y]])
-
+    triangle = np.array([[tip_x, tip_y], [left_x, left_y], [right_x, right_y]])
     triangle_patch = ax.fill(triangle[:, 0], triangle[:, 1], color='darkviolet', alpha=1)[0]
     
     ax.figure.canvas.draw()
-
+    
 plot_placeholder = st.empty()
 
 image_placeholder = st.empty()
 
 fig, ax = koordinat_kartesius(path)
 
+#fungsi update data
 trajectory_x = []
 trajectory_y = []
 trajectory_line, = ax.plot([], [], color='black', linestyle='--', marker='o', markersize=1)
 
-#fungsi update data
 def update_plot():
     global trajectory_x, trajectory_y
     data = data_backend()
@@ -212,6 +215,7 @@ def update_plot():
             time_value = data.get('time')
             latt = data.get('coordinate1')
             lon = data.get('coordinate1')
+            yaw = data.get('yaw')
 
             trajectory_x.append(x)
             trajectory_y.append(y)
@@ -219,7 +223,7 @@ def update_plot():
             ax.relim()
             ax.autoscale_view()
 
-            draw_triangle(ax, x, y, cog)
+            heading_kapal(ax, x, y, yaw)
 
             sog_knot_placeholder.metric("SOG [Knot]", f"{knot} kt")
             sog_kmh_placeholder.metric("SOG [Km/h]", f"{km_per_hours} km/h")
