@@ -6,6 +6,12 @@ import os
 
 st.set_page_config(page_title="Monitoring-kki-2024", page_icon="🌍", layout="wide")
 
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+local_css("style.css")
+
 #sidebar
 st.sidebar.markdown('<h4 class="sidebar-text">NAVIGASI LINTASAN</h4>', unsafe_allow_html=True)
 path = st.sidebar.radio("", ["Lintasan A ⚓", "Lintasan B ⚓"])
@@ -56,11 +62,11 @@ def judul_hasil_foto():
 
 def koordinat_kartesius(path):
     
-    fig, ax = plt.subplots(figsize=(13, 13))  # Kurangi ukuran gambar
+    fig, ax = plt.subplots(figsize=(5, 5))  # Kurangi ukuran gambar
     ax.set_xlim(0, 2500)
     ax.set_ylim(0, 2500)
-    ax.set_xticks(range(0, 2600, 100))
-    ax.set_yticks(range(0, 2600, 100))
+    ax.set_xticks(range(0, 2600, 500))
+    ax.set_yticks(range(0, 2600, 500))
     ax.grid(True)
 
     if path == "Lintasan A ⚓":
@@ -139,15 +145,15 @@ def gambar_lintasan_lomba():
 
 def posisi_floating_ball(path):
     if path == "A":
-        green_positions = [(330, 960), (330, 1310), (450, 1715), (1040, 2230), (1200, 2230),
-                         (1360, 2230), (1520, 2230), (2305, 1465), (2160, 1160), (2240, 855)]
+        green_positions = [(330, 960), (330, 1310), (450, 1715), (1040, 2250), (1200, 2250),
+                         (1360, 2250), (1520, 2250), (2325, 1465), (2180, 1160), (2260, 855)]
         red_positions = [(180, 960), (180, 1310), (300, 1715), (1040, 2100), (1200, 2100),
                            (1360, 2100), (1520, 2100), (2175, 1465), (2030, 1160), (2110, 855)]
     elif path == "B":
         red_positions = [(390, 855), (470, 1160), (325, 1465), (980, 2100), (1140, 2100),
-                         (1300, 2100), (1460, 2100), (2220, 1715), (2320, 1310), (2320, 960)]
-        green_positions = [(260, 855), (340, 1160), (195, 1465), (980, 2230), (1140, 2230),
-                           (1300, 2230), (1460, 2230), (2070, 1715), (2170, 1310), (2170, 960)]
+                         (1300, 2100), (1460, 2100), (2200, 1715), (2320, 1310), (2320, 960)]
+        green_positions = [(240, 855), (320, 1160), (175, 1465), (980, 2250), (1140, 2250),
+                           (1300, 2250), (1460, 2250), (2050, 1715), (2170, 1310), (2170, 960)]
     return red_positions, green_positions
     
 
@@ -224,98 +230,3 @@ if start_monitoring_button:
 else:
     gambar_lintasan_lomba()
     
-page_bg_img = f"""
-<style>
-[data-testid="stAppViewContainer"] > .main {{
-background-color: #b2d3eb;
-background-size: cover;
-background-position: center center;
-background-repeat: no-repeat;
-background-attachment: local;
-}}
-[data-testid="stHeader"] {{
-background: rgba(0,0,0,0);
-}}
-</style>
-"""
-st.markdown(page_bg_img, unsafe_allow_html=True)
-
-st.markdown("""
-    <style>
-        [data-testid="stSidebar"] {
-            background-color: #CDDFEF;
-            color: #ffff;
-            font-weight: bold; 
-        }
-        .css-1lcbmhc > div > label {
-        color: white !important; /* Setting text color to white */
-        font-family: 'Arial', sans-serif; /* Change to any other desired font */
-        font-weight: bold; /* Making the font bold */
-    }
-
-        .header-text {
-            text-align: center;
-            color: #ffff;
-            background-color: #3A6E8F;
-            padding: 10px; 
-            border-radius: 15px;
-            margin-bottom: 5px; 
-            border: 2px solid white;
-            font-size: 24px;
-            font-family: 'Courier New', Courier, monospace;
-        }
-        .judul-text {
-            text-align: center;
-            color: white;
-            background-color: #65A7D3;
-            padding: 10px; 
-            border-radius: 15px;
-            margin-bottom: 10px; 
-            border: 2px solid white;
-            font-size: 18px;
-            font-family: 'Courier New', Courier, monospace;
-        }
-        [data-testid="stMetricValue"] {
-            font-size: 16px;
-        }
-        [data-testid="stMetricLabel"] {
-            font-size: 12px;
-        }
-        .stButton > button {
-            background-color: #4CAF50; 
-            color: #ffff;    
-            border: 2px solid white;
-            font-weight: bold; 
-        }
-        .container {
-            background-color: white; /* Mengatur latar belakang kontainer menjadi putih */
-            padding: 20px;          /* Menambahkan padding */
-            border-radius: 10px;    /* Mengatur sudut agar melengkung */
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Menambahkan bayangan untuk efek kedalaman */
-        }
-    </style>
-    """, unsafe_allow_html=True)
-
-st.markdown(
-    """
-    <style>
-    .sidebar-text {
-            text-align: center;
-            color: #FFFF;
-            background-color: #65A7D3;
-            padding: 13px; 
-            border-radius: 15px;
-            border: 2px solid white;
-            font-size: 20px;
-            font-family: 'Courier New', Courier, monospace;
-            margin-bottom: 3px;
-        }
-    </style>
-    """, 
-    unsafe_allow_html=True
-)
-    
-
-
-
-
