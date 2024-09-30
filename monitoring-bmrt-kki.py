@@ -3,6 +3,7 @@ import requests
 import matplotlib.pyplot as plt
 import time
 import os
+import numpy as np
 
 st.set_page_config(page_title="Monitoring-kki-2024", page_icon="🌍", layout="wide")
 
@@ -149,21 +150,46 @@ def posisi_floating_ball(path):
         green_positions = [(240, 855), (320, 1160), (175, 1465), (980, 2250), (1140, 2250),
                            (1300, 2250), (1460, 2250), (2050, 1715), (2170, 1310), (2170, 960)]
     return red_positions, green_positions
-    
 
+#Visualisasi arah hadap kapal
+triangle_patch = None
+
+def draw_triangle(ax, x, y, cog):
+    global triangle_patch
+
+    if triangle_patch is not None:
+        triangle_patch.remove() 
+        triangle_patch = None
+
+    angle = np.deg2rad(cog)
+    arrow_length = 35
+    base_length = 40
+    tip_x = x + arrow_length * np.cos(angle)
+    tip_y = y + arrow_length * np.sin(angle)
+
+    left_x = tip_x - base_length * np.cos(angle + np.pi / 6)
+    left_y = tip_y - base_length * np.sin(angle + np.pi / 6)
+    right_x = tip_x - base_length * np.cos(angle - np.pi / 6)
+    right_y = tip_y - base_length * np.sin(angle - np.pi / 6)
+
+    triangle = np.array([[tip_x, tip_y], [left_x, left_y], [right_x, right_y], [tip_x, tip_y]])
+
+    triangle_patch = ax.fill(triangle[:, 0], triangle[:, 1], color='darkviolet', alpha=1)[0]
+    
+    ax.figure.canvas.draw()
 
 plot_placeholder = st.empty()
+
 image_placeholder = st.empty()
 
 fig, ax = koordinat_kartesius(path)
 
 trajectory_x = []
 trajectory_y = []
-trajectory_line, = ax.plot([], [], color='blue', linestyle='-', marker='o', markersize=3)
+trajectory_line, = ax.plot([], [], color='black', linestyle='--', marker='o', markersize=1)
 
-
-def update_plot():
 #fungsi update data
+def update_plot():
     global trajectory_x, trajectory_y
     data = data_backend()
     if data:
@@ -192,6 +218,8 @@ def update_plot():
             trajectory_line.set_data(trajectory_x, trajectory_y)
             ax.relim()
             ax.autoscale_view()
+
+            draw_triangle(ax, x, y, cog)
 
             sog_knot_placeholder.metric("SOG [Knot]", f"{knot} kt")
             sog_kmh_placeholder.metric("SOG [Km/h]", f"{km_per_hours} km/h")
