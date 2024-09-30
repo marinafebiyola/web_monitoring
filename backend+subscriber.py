@@ -27,8 +27,8 @@ def monitoring():
     rospy.spin()  
 
 # Flask endpoint to get data
-@app.route('/random-data', methods=['GET'])
-def get_random_data():
+@app.route('/data-receive', methods=['GET'])
+def get_data_receive():
     
     now = datetime.now()
     day = now.strftime("%a")
