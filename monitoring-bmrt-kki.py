@@ -7,11 +7,23 @@ import numpy as np
 
 st.set_page_config(page_title="Monitoring-kki-2024", page_icon="🌍", layout="wide")
 
+# Backend URL
+FLASK_URL = 'http://127.0.0.1:5000/data-receive'
+def data_backend():
+    try:
+        response = requests.get(FLASK_URL)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        st.error(f"Error fetching data: {e}")
+        return None
+    
 #sidebar
 st.sidebar.markdown('<h4 class="sidebar-text">NAVIGASI LINTASAN</h4>', unsafe_allow_html=True)
 path = st.sidebar.radio("", ["Lintasan A ⚓", "Lintasan B ⚓"])
 start_monitoring_button = st.sidebar.button("START BUTTON", key="start_monitoring_button")
 
+#Header
 col1, col2, col3, col4 = st.columns([1,3,3,1])
 with col1:
     st.image('logo.jpeg', width=105)
@@ -22,6 +34,7 @@ with col3:
 with col4:
     st.image('polibatamLogo.jpeg', width=110)
 
+#Informasi geo-tag info
 st.markdown("<h6 class='judul-text'>GEO-TAG INFOS</h6>", unsafe_allow_html=True)
 col1, col2, col3, col4, col5, col6, col7, col8 = st.columns([1,1,1,2,1,1,1,1])
 day_placeholder = col1.metric("Day", "Loading...")
@@ -33,31 +46,11 @@ sog_kmh_placeholder = col6.metric("SOG [Km/h]", "Loading...")
 cog_placeholder = col7.metric("COG", "Loading...")
 position_placeholder = col8.metric("Position [x,y]", "Loading...")
 
+#Trajectory Map
 st.markdown("<h5 class='judul-text'>TRAJECTORY MAP</h5>", unsafe_allow_html=True)
-
-# Backend URL
-FLASK_URL = 'http://127.0.0.1:5000/data-receive'
-
-
-def data_backend():
-    try:
-        response = requests.get(FLASK_URL)
-        response.raise_for_status()
-        return response.json()
-    except requests.RequestException as e:
-        st.error(f"Error fetching data: {e}")
-        return None
-def judul_hasil_foto():
-    col1, col2 = st.columns(2)
-    with col1 :
-        st.markdown("<h6 class='header-text'>Under Water Picture</h6>", unsafe_allow_html=True)
-    with col2 :
-        st.markdown("<h6 class='header-text'>Water Surface Picture</h6>", unsafe_allow_html=True)
-
-
 def koordinat_kartesius(path):
     
-    fig, ax = plt.subplots(figsize=(5, 5))  # Kurangi ukuran gambar
+    fig, ax = plt.subplots(figsize=(3, 3))
     ax.set_xlim(0, 2500)
     ax.set_ylim(0, 2500)
     ax.set_xticks(range(0, 2600, 500))
@@ -103,41 +96,6 @@ def koordinat_kartesius(path):
 
     return fig, ax
 
-def hasil_foto_surface():
-    surface_dir = os.path.expanduser("~/kki2024_ws/surface_box")
-    #surface_dir = os.path.expanduser("~/Downloads")
-    surface_file = "sbox_1.jpg" 
-    #surface_file = "poltek.png" 
-    surface_path = os.path.join(surface_dir, surface_file)
-    
-    if os.path.isfile(surface_path):
-        with image_placeholder.container():
-            col1, _ = st.columns([1, 1])
-            with col1:
-                st.image(surface_path, caption="Surface Water Box", use_column_width=True)
-    else:
-        return None, None
-        
-def hasil_foto_underwater():
-    underwater_dir = os.path.expanduser("~/kki2024_ws/underwater_box")
-    underwater_file = "ubox_1.jpg"  
-    underwater_path = os.path.join(underwater_dir, underwater_file)
-    
-    if os.path.isfile(underwater_path):
-        with image_placeholder.container():
-            _, col2 = st.columns([1, 1])
-            with col2:
-                st.image(underwater_path, caption="Under Water Box", use_column_width=True)
-    else:
-        return None, None
-
-def gambar_lintasan_lomba():
-    col1, col2 = st.columns(2)
-    with col1:
-        st.image('lintasanA.jpeg', caption='Lintasan A')
-    with col2:
-        st.image('lintasanB.jpeg', caption='Lintasan B')
-
 def posisi_floating_ball(path):
     if path == "A":
         green_positions = [(330, 960), (330, 1310), (450, 1715), (1040, 2250), (1200, 2250),
@@ -151,9 +109,46 @@ def posisi_floating_ball(path):
                            (1300, 2250), (1460, 2250), (2050, 1715), (2170, 1310), (2170, 960)]
     return red_positions, green_positions
 
+def hasil_foto_surface():
+    #surface_dir = os.path.expanduser("~/kki2024_ws/surface_box")
+    surface_dir = os.path.expanduser("~/Downloads")
+    surface_file = "sbox_1.jpg" 
+    #surface_file = "poltek.png" 
+    surface_path = os.path.join(surface_dir, surface_file)
+    
+    if os.path.isfile(surface_path):
+        with image_placeholder.container():
+            col1, _ = st.columns([1, 1])
+            with col1:
+                st.markdown("<h6 class='judul-text'>Water Surface Picture</h6>", unsafe_allow_html=True)
+                st.image(surface_path, caption="Green Box", use_column_width=True)
+    else:
+        return None, None
+        
+def hasil_foto_underwater():
+    #underwater_dir = os.path.expanduser("~/kki2024_ws/underwater_box")
+    underwater_dir = os.path.expanduser("~/Downloads")
+    underwater_file = "ubox_1.jpg"  
+    underwater_path = os.path.join(underwater_dir, underwater_file)
+    
+    if os.path.isfile(underwater_path):
+        with image_placeholder.container():
+            _, col2 = st.columns([1, 1])
+            with col2:
+                st.markdown("<h6 class='judul-text'>Under Water Picture</h6>", unsafe_allow_html=True)
+                st.image(underwater_path, caption="Blue Box", use_column_width=True)
+    else:
+        return None, None
+
+def gambar_lintasan_lomba():
+    col1, col2 = st.columns(2)
+    with col1:
+        st.image('lintasanA.jpeg', caption='Lintasan A')
+    with col2:
+        st.image('lintasanB.jpeg', caption='Lintasan B')
+
 #Visualisasi arah hadap kapal
 triangle_patch = None
-
 def heading_kapal(ax, x, y, yaw):
     global triangle_patch
 
@@ -191,7 +186,6 @@ fig, ax = koordinat_kartesius(path)
 trajectory_x = []
 trajectory_y = []
 trajectory_line, = ax.plot([], [], color='black', linestyle='--', marker='o', markersize=1)
-
 def update_plot():
     global trajectory_x, trajectory_y
     data = data_backend()
@@ -205,8 +199,9 @@ def update_plot():
                 x = data.get('x') + 2185
                 #y = data.get('y') + 115
                 y = data.get('y') + 300
-            
 
+            nilai_x = data.get('x')
+            nilai_y = data.get('y')
             knot = data.get('sog_knot')
             km_per_hours = data.get('sog_kmh')
             cog = data.get('cog')
@@ -216,7 +211,7 @@ def update_plot():
             latt = data.get('coordinate1')
             lon = data.get('coordinate1')
             yaw = data.get('yaw')
-
+            
             trajectory_x.append(x)
             trajectory_y.append(y)
             trajectory_line.set_data(trajectory_x, trajectory_y)
@@ -225,14 +220,14 @@ def update_plot():
 
             heading_kapal(ax, x, y, yaw)
 
-            sog_knot_placeholder.metric("SOG [Knot]", f"{knot} kt")
+            sog_knot_placeholder.metric("SOG [Knot]", f"{knot} knot")
             sog_kmh_placeholder.metric("SOG [Km/h]", f"{km_per_hours} km/h")
             cog_placeholder.metric("COG", f"{cog}°")
             day_placeholder.metric("Day", day)
             date_placeholder.metric("Date", date)
             time_placeholder.metric("Time", time_value)
             coordinate_placeholder.metric("Coordinate", f" S{latt}, E{lon}")
-            position_placeholder.metric("Position [x,y]",f"{x}, {y}")
+            position_placeholder.metric("Position [x,y]",f"{nilai_x}, {nilai_y}")
 
             plot_placeholder.pyplot(fig)
 
