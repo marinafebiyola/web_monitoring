@@ -274,12 +274,6 @@ st.markdown("""
             color: #ffff;
             font-weight: bold; 
         }
-        .css-1lcbmhc > div > label {
-        color: white !important; /* Setting text color to white */
-        font-family: 'Arial', sans-serif; /* Change to any other desired font */
-        font-weight: bold; /* Making the font bold */
-    }
-
         .header-text {
             text-align: center;
             color: #ffff;
@@ -315,12 +309,6 @@ st.markdown("""
             color: #ffff;    
             border: 2px solid white;
             font-weight: bold; 
-        }
-        .container {
-            background-color: white; /* Mengatur latar belakang kontainer menjadi putih */
-            padding: 20px;          /* Menambahkan padding */
-            border-radius: 10px;    /* Mengatur sudut agar melengkung */
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Menambahkan bayangan untuk efek kedalaman */
         }
     </style>
     """, unsafe_allow_html=True)
