@@ -270,7 +270,7 @@ st.markdown(page_bg_img, unsafe_allow_html=True)
 st.markdown("""
     <style>
         [data-testid="stSidebar"] {
-            background-color: #CDDFEF;
+            background-color: #65A7D3;
             color: #ffff;
             font-weight: bold; 
         }
@@ -304,9 +304,11 @@ st.markdown("""
         }
         [data-testid="stMetricValue"] {
             font-size: 16px;
+            color : black;
         }
         [data-testid="stMetricLabel"] {
             font-size: 12px;
+            color : black;
         }
         .stButton > button {
             background-color: #4CAF50; 
@@ -329,7 +331,7 @@ st.markdown(
     .sidebar-text {
             text-align: center;
             color: #FFFF;
-            background-color: #65A7D3;
+            background-color: #3A6E8F;
             padding: 13px; 
             border-radius: 15px;
             border: 2px solid white;
