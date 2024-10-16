@@ -18,7 +18,7 @@ def data_backend():
         response.raise_for_status()
         return response.json()
     except requests.RequestException as e:
-        st.error(f"Error fetching data: {e}")
+        st.error(f"Error: {e}")
         return None
     
 #sidebar
@@ -58,25 +58,17 @@ with col3:
 with col4:
     cog_placeholder = col4.metric("COG", "Loading...")
 
-table_entries = []  # List untuk menyimpan entri tabel
-def update_table():
-    # Buat DataFrame untuk menampilkan data
-    df = pd.DataFrame(table_entries, columns=["Time", "Event", "Status"])
-    st.table(df)
-
 col1, col2 = st.columns([3,1])
 with col1:
     st.markdown("<h6 class='judul-text'>POSITION-LOG</h6>", unsafe_allow_html=True)
-    update_table()
-
+    table_placeholder = st.empty()
+   
 
 with col2:
     st.markdown("<h6 class='judul-text'>FLOATING BALL</h6>", unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1,1,1])
     with col2:
         floating_ball_placeholder = st.metric("Ball Set", "Loading...")
-
-
 
 #Trajectory Map
 st.markdown("<h5 class='judul-text'>TRAJECTORY MAP</h5>", unsafe_allow_html=True)
@@ -150,13 +142,13 @@ def hasil_foto_surface():
     surface_path = os.path.join(surface_dir, surface_file)
     
     if os.path.isfile(surface_path):
+
         with image_placeholder.container():
             col1, _ = st.columns([1, 1])
             with col1:
                 st.markdown("<h6 class='judul-text'>Water Surface Picture</h6>", unsafe_allow_html=True)
                 st.image(surface_path, caption="Green Box", use_column_width=True)
-    else:
-        return None, None
+
         
 def hasil_foto_underwater():
     #underwater_dir = os.path.expanduser("~/kki2024_ws/underwater_box")
@@ -180,44 +172,6 @@ def gambar_lintasan_lomba():
     with col2:
         st.image('lintasanB.jpeg', caption='Lintasan B')
 
-# def update_floating_ball_count(x, y, path, floating_ball_count):
-#     # Define boundaries for path A
-#     conditions_a = {
-#         0: lambda x, y: x > 2000 and y > 900,
-#         1: lambda x, y: x > 2000 and y > 1200,
-#         2: lambda x, y: x > 2000 and y > 1500,
-#         3: lambda x, y: y > 2000 and x > 1400,
-#         4: lambda x, y: y > 2000 and x > 1300,
-#         5: lambda x, y: y > 2000 and x > 1100,
-#         6: lambda x, y: y > 2000 and x > 1000,
-#         7: lambda x, y: x < 500 and y < 1700,
-#         8: lambda x, y: x < 500 and y < 1300,
-#         9: lambda x, y: x < 500 and y < 950,
-#     }
-
-#     # Define boundaries for path B
-#     conditions_b = {
-#         0: lambda x, y: x < 500 and y > 900,
-#         1: lambda x, y: x < 500 and y > 1200,
-#         2: lambda x, y: x < 500 and y > 1500,
-#         3: lambda x, y: y > 2000 and x > 1000,
-#         4: lambda x, y: y > 2000 and x > 1200,
-#         5: lambda x, y: y > 2000 and x > 1350,
-#         6: lambda x, y: y > 2000 and x > 1500,
-#         7: lambda x, y: x > 2000 and y < 1700,
-#         8: lambda x, y: x > 2000 and y < 1300,
-#         9: lambda x, y: x > 2000 and y < 950,
-#     }
-
-#     # Select conditions based on the path
-#     conditions = conditions_a if path == "Lintasan A ⚓" else conditions_b
-
-#     # Check the conditions for the current floating_ball_count
-#     if floating_ball_count in conditions and conditions[floating_ball_count](x, y):
-#         floating_ball_count += 1
-
-#     return floating_ball_count
-
 #Visualisasi arah hadap kapal
 triangle_patch = None
 def heading_kapal(ax, x, y, yaw):
@@ -238,33 +192,36 @@ def heading_kapal(ax, x, y, yaw):
     tip_y = y + arrow_length * np.sin(angle)
 
     left_x = tip_x - base_length * np.cos(angle + np.pi / 6)  
-    left_y = tip_y - base_length * np.sin(angle + np.pi / 6)  # Hitungan untuk titik kiri
+    left_y = tip_y - base_length * np.sin(angle + np.pi / 6) 
     right_x = tip_x - base_length * np.cos(angle - np.pi / 6)  
-    right_y = tip_y - base_length * np.sin(angle - np.pi / 6)  # Hitungan untuk titik kanan
+    right_y = tip_y - base_length * np.sin(angle - np.pi / 6) 
 
     triangle = np.array([[tip_x, tip_y], [left_x, left_y], [right_x, right_y]])
     triangle_patch = ax.fill(triangle[:, 0], triangle[:, 1], color='darkviolet', alpha=1)[0]
     
     ax.figure.canvas.draw()
-    
+
 plot_placeholder = st.empty()
 
 image_placeholder = st.empty()
 
 fig, ax = koordinat_kartesius(path)
 
-#fungsi update data
+#Update data
+table_entries = [] 
 trajectory_x = []
 trajectory_y = []
-start_time = None
-end_time = None
 floating_ball_count = 0
 trajectory_line, = ax.plot([], [], color='black', linestyle='--', marker='o', markersize=1)
 def update_plot():
-    global trajectory_x, trajectory_y, start_time, end_time, floating_ball_count
+    global trajectory_x, trajectory_y, floating_ball_count, surface_imaging_executed, underwater_imaging_executed
     data = data_backend()
+    
     if data:
+        surface_imaging_executed = False
+        underwater_imaging_executed = False
         try:
+            
             if path == "Lintasan B ⚓":
                 x = data.get('x') + 335
                 y = data.get('y') + 115
@@ -285,26 +242,13 @@ def update_plot():
             latt = data.get('coordinate1')
             lon = data.get('coordinate1')
             yaw = data.get('yaw')
-            
-            if nilai_y == 5:
-                if start_time is None:
-                    start_time = datetime.now().strftime("%H:%M:%S")  # Simpan waktu saat y = 5
-                    table_entries.append([start_time, "start", "Loading..."])  # Tambahkan entri ke tabel
-            elif nilai_y == 4:
-                if start_time is not None and end_time is None:  # Pastikan start_time ada
-                    end_time = datetime.now().strftime("%H:%M:%S")  # Simpan waktu saat y = 4
-                    table_entries.append([end_time, "finish", "Loading..."])  # Tambahkan entri ke tabel
-            elif nilai_y == 3:
-                if end_time is not None:  # Pastikan end_time ada
-                    end_time = datetime.now().strftime("%H:%M:%S")  # Update waktu finish
-                    table_entries.append([end_time, "finish", "Loading..."]) 
-
+            time_value = data.get('time')
+        
             trajectory_x.append(x)
             trajectory_y.append(y)
             trajectory_line.set_data(trajectory_x, trajectory_y)
-
             heading_kapal(ax, x, y, yaw)
-            
+            plot_placeholder.pyplot(fig)
 
             sog_knot_placeholder.metric("SOG [Knot]", f"{knot} knot")
             sog_kmh_placeholder.metric("SOG [Km/h]", f"{km_per_hours} km/h")
@@ -366,15 +310,106 @@ def update_plot():
                 elif x > 2000 and y < 920 and floating_ball_count == 9:
                     floating_ball_count = 10
 
+            df = pd.DataFrame(table_entries)
+            table_placeholder.dataframe(df, use_container_width=True)
 
-            plot_placeholder.pyplot(fig)
+            #status untuk event
+            surface_imaging_executed = False
+            underwater_imaging_executed = False
+            floating_ball_executed = False
+            finished = False
 
+            if nilai_x == 0 and nilai_y == 0:
+                event = "Start"
+                entry = {
+                    'Day': day,
+                    'Date': date,
+                    'Time': time_value,
+                    'Coordinate': f"S{latt}, E{lon}",
+                    'SOG [Knot]': f"{knot} knot",
+                    'COG': f"{cog}°",
+                    'Floating ball': f"{floating_ball_count}",
+                    'Event': event
+                }
+                table_entries.append(entry)
+                return True  
+
+            surface_dir = r"C:\Users\user\Documents\foto"
+            surface_file = "sbox_1.PNG"
+            surface_path = os.path.join(surface_dir, surface_file)
+            if os.path.isfile(surface_path) and floating_ball_count > 8 and not finished:
+                event = "Mission Surface Imaging"
+                entry = {
+                    'Day': day,
+                    'Date': date,
+                    'Time': time_value,
+                    'Coordinate': f"S{latt}, E{lon}",
+                    'SOG [Knot]': f"{knot} knot",
+                    'COG': f"{cog}°",
+                    'Floating ball': f"{floating_ball_count}",
+                    'Event': event
+                }
+                table_entries.append(entry)
+                surface_imaging_executed = True
+
+            underwater_dir = r"C:\Users\user\Documents\foto2"
+            underwater_file = "ubox_1.PNG"
+            underwater_path = os.path.join(underwater_dir, underwater_file)
+
+            if os.path.isfile(underwater_path) and floating_ball_count > 8 and not finished:
+                event = "Mission Underwater Imaging"
+                entry = {
+                    'Day': day,
+                    'Date': date,
+                    'Time': time_value,
+                    'Coordinate': f"S{latt}, E{lon}",
+                    'SOG [Knot]': f"{knot} knot",
+                    'COG': f"{cog}°",
+                    'Floating ball': f"{floating_ball_count}",
+                    'Event': event
+                }
+                table_entries.append(entry)
+                underwater_imaging_executed = True
+
+            # Memeriksa kondisi untuk event Finish
+            if (path == "Lintasan A ⚓" and x > 2100 and y < 165) or (path == "Lintasan B ⚓" and x < 415 and y < 165):
+                if not finished:
+                    event = "Finish"
+                    entry = {
+                        'Day': day,
+                        'Date': date,
+                        'Time': time_value,
+                        'Coordinate': f"S{latt}, E{lon}",
+                        'SOG [Knot]': f"{knot} knot",
+                        'COG': f"{cog}°",
+                        'Floating ball': f"{floating_ball_count}",
+                        'Event': event
+                    }
+                    table_entries.append(entry)
+                    finished = True
+                    return True 
+
+            if 1 <= floating_ball_count < 10 and not floating_ball_executed and not finished:
+                # Kondisi untuk event Floating Ball
+                event = "Floating Ball"
+                entry = {
+                    'Day': day,
+                    'Date': date,
+                    'Time': time_value,
+                    'Coordinate': f"S{latt}, E{lon}",
+                    'SOG [Knot]': f"{knot} knot",
+                    'COG': f"{cog}",
+                    'Floating ball': f"{floating_ball_count}",
+                    'Event': event
+                }
+                table_entries.append(entry)
+                floating_ball_executed = True
+                return True
+  
         except (TypeError, KeyError) as e:
             st.error(f"Error processing data: {e}")
     else:
         st.warning("No data received.")
-  
-
 
 # Main loop
 if start_monitoring_button:
@@ -385,8 +420,7 @@ if start_monitoring_button:
         update_plot()
         hasil_foto_surface()
         hasil_foto_underwater()
-        time.sleep(1)
-        
+        time.sleep(1)       
 else:
     gambar_lintasan_lomba()
 
@@ -434,8 +468,10 @@ st.markdown("""
         }
         [data-testid="stMetricValue"] {
             font-size: 16px;
-            color : black;
+            color : #242649;
             font-family: 'Montserrat', sans-serif;
+            font-weight: bold; 
+
         }
         [data-testid="stMetricLabel"] {
             font-size: 12px;
@@ -465,7 +501,7 @@ st.markdown(
             font-family: 'Montserrat', sans-serif;
         }
         [data-testid="stSidebar"] {
-            background-color: #65A7D3;
+            background-color: #7FBADC;
             color: #ffff;
             font-weight: bold;
             font-family: 'Montserrat', sans-serif; 
