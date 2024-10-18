@@ -135,8 +135,8 @@ def posisi_floating_ball(path):
     return red_positions, green_positions
 
 def hasil_foto_surface():
-    #surface_dir = os.path.expanduser("~/kki2024_ws/surface_box")
-    surface_dir = os.path.expanduser("~/Downloads")
+    surface_dir = os.path.expanduser("~/kki2024_ws/surface_box")
+    #surface_dir = os.path.expanduser("~/Downloads")
     surface_file = "sbox_1.jpg" 
     #surface_file = "poltek.png" 
     surface_path = os.path.join(surface_dir, surface_file)
@@ -151,8 +151,8 @@ def hasil_foto_surface():
 
         
 def hasil_foto_underwater():
-    #underwater_dir = os.path.expanduser("~/kki2024_ws/underwater_box")
-    underwater_dir = os.path.expanduser("~/Downloads")
+    underwater_dir = os.path.expanduser("~/kki2024_ws/underwater_box")
+    #underwater_dir = os.path.expanduser("~/Downloads")
     underwater_file = "ubox_1.jpg"  
     underwater_path = os.path.join(underwater_dir, underwater_file)
     
@@ -269,13 +269,13 @@ def update_plot():
                 elif x > 2000 and y > 1500 and floating_ball_count == 2:
                     floating_ball_count = 3
                 #set ke-2
-                elif y > 2000 and x < 1500 and floating_ball_count == 3:
+                elif y > 1800 and x < 1500 and floating_ball_count == 3:
                     floating_ball_count = 4
-                elif y > 2000 and x < 1330 and floating_ball_count == 4:
+                elif y > 1800 and x < 1330 and floating_ball_count == 4:
                     floating_ball_count = 5
-                elif y > 2000 and x < 1160 and floating_ball_count == 5:
+                elif y > 1800 and x < 1160 and floating_ball_count == 5:
                     floating_ball_count = 6
-                elif y > 2000 and x < 1000 and floating_ball_count == 6:
+                elif y > 1800 and x < 1000 and floating_ball_count == 6:
                     floating_ball_count = 7
                 #set ke-3
                 elif x < 500 and y < 1690 and floating_ball_count == 7:
@@ -319,7 +319,7 @@ def update_plot():
             floating_ball_executed = False
             finished = False
 
-            if nilai_x == 0 and nilai_y == 0:
+            if nilai_x == 0 and nilai_y == 0 and not finished:
                 event = "Start"
                 entry = {
                     'Day': day,
@@ -334,10 +334,10 @@ def update_plot():
                 table_entries.append(entry)
                 return True  
 
-            surface_dir = r"C:\Users\user\Documents\foto"
-            surface_file = "sbox_1.PNG"
+            surface_dir = os.path.expanduser("~/kki2024_ws/surface_box")
+            surface_file = "sbox_1.jpg"
             surface_path = os.path.join(surface_dir, surface_file)
-            if os.path.isfile(surface_path) and floating_ball_count > 8 and not finished:
+            if os.path.isfile(surface_path) and not finished:
                 event = "Mission Surface Imaging"
                 entry = {
                     'Day': day,
@@ -351,12 +351,11 @@ def update_plot():
                 }
                 table_entries.append(entry)
                 surface_imaging_executed = True
-
-            underwater_dir = r"C:\Users\user\Documents\foto2"
-            underwater_file = "ubox_1.PNG"
+                
+            underwater_dir = os.path.expanduser("~/kki2024_ws/underwater_box")
+            underwater_file = "ubox_1.jpg"  
             underwater_path = os.path.join(underwater_dir, underwater_file)
-
-            if os.path.isfile(underwater_path) and floating_ball_count > 8 and not finished:
+            if os.path.isfile(underwater_path) and not finished:
                 event = "Mission Underwater Imaging"
                 entry = {
                     'Day': day,
@@ -373,7 +372,7 @@ def update_plot():
 
             # Memeriksa kondisi untuk event Finish
             if (path == "Lintasan A ⚓" and x > 2100 and y < 165) or (path == "Lintasan B ⚓" and x < 415 and y < 165):
-                if not finished:
+                if not finished and surface_imaging_executed and underwater_imaging_executed:
                     event = "Finish"
                     entry = {
                         'Day': day,
@@ -420,7 +419,7 @@ if start_monitoring_button:
         update_plot()
         hasil_foto_surface()
         hasil_foto_underwater()
-        time.sleep(1)       
+        time.sleep(0.5)       
 else:
     gambar_lintasan_lomba()
 
