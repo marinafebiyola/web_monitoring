@@ -11,9 +11,10 @@ from datetime import datetime
 st.set_page_config(page_title="Monitoring-kki-2024", page_icon="🌍", layout="wide")
 
 # Backend URL
-FLASK_URL = 'https://b777-103-53-76-210.ngrok-free.app/'
-UNDERWATER_URL = (f"{FLASK_URL}images/ubox_1.jpg")
+FLASK_URL = 'https://af40-103-53-76-210.ngrok-free.app/'
 SURFACE_URL = (f"{FLASK_URL}images/sbox_1.jpg")
+UNDERWATER_URL = (f"{FLASK_URL}images/ubox_1.jpg")
+
 
 # https://5105-103-53-76-210.ngrok-free.app
 def data_backend():
