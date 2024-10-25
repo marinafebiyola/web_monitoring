@@ -11,7 +11,7 @@ from datetime import datetime
 st.set_page_config(page_title="Monitoring-kki-2024", page_icon="🌍", layout="wide")
 
 # Backend URL
-FLASK_URL = 'https://4412-103-53-76-210.ngrok-free.app/'
+FLASK_URL = 'https://b777-103-53-76-210.ngrok-free.app/'
 UNDERWATER_URL = (f"{FLASK_URL}images/ubox_1.jpg")
 SURFACE_URL = (f"{FLASK_URL}images/sbox_1.jpg")
 
@@ -171,6 +171,7 @@ def update_gambar():
         hasil_foto_surface(konten_gambar1)  # Mengirim konten gambar
     if konten_gambar2:
         hasil_foto_underwater(konten_gambar2)
+    time.sleep(2)
     
 def gambar_lintasan_lomba():
     col1, col2 = st.columns(2)
