@@ -255,11 +255,11 @@ def update_plot():
 
             if path == "Lintasan A ⚓":
                 #set ke-1
-                if x > 2000 and y > 900 and floating_ball_count == 0:
+                if x >  1800 and y > 900 and floating_ball_count == 0:
                     floating_ball_count = 1
-                elif x > 2000 and y > 1200 and floating_ball_count == 1:
+                elif x > 1800 and y > 1200 and floating_ball_count == 1:
                     floating_ball_count = 2
-                elif x > 2000 and y > 1500 and floating_ball_count == 2:
+                elif x > 1800 and y > 1500 and floating_ball_count == 2:
                     floating_ball_count = 3
                 #set ke-2
                 elif y > 1800 and x < 1500 and floating_ball_count == 3:
@@ -271,36 +271,36 @@ def update_plot():
                 elif y > 1800 and x < 1000 and floating_ball_count == 6:
                     floating_ball_count = 7
                 #set ke-3
-                elif x < 500 and y < 1690 and floating_ball_count == 7:
+                elif x < 700 and y < 1690 and floating_ball_count == 7:
                     floating_ball_count = 8
-                elif x < 500 and y < 1290 and floating_ball_count == 8:
+                elif x < 700 and y < 1290 and floating_ball_count == 8:
                     floating_ball_count = 9
-                elif x < 500 and y < 920 and floating_ball_count == 9:
+                elif x < 700 and y < 920 and floating_ball_count == 9:
                     floating_ball_count = 10
                     
             elif path == "Lintasan B ⚓":
                 #set ke-1
-                if x < 500 and y > 890 and floating_ball_count == 0:
+                if x < 700 and y > 890 and floating_ball_count == 0:
                     floating_ball_count = 1
-                elif x < 500 and y > 1200 and floating_ball_count == 1:
+                elif x < 700 and y > 1200 and floating_ball_count == 1:
                     floating_ball_count = 2
-                elif x < 500 and y > 1500 and floating_ball_count == 2:
+                elif x < 700 and y > 1500 and floating_ball_count == 2:
                     floating_ball_count = 3
                 #set ke-2
-                elif y > 2000 and x > 1000 and floating_ball_count == 3:
+                elif y > 1800 and x > 1000 and floating_ball_count == 3:
                     floating_ball_count = 4
-                elif y > 2000 and x > 1170 and floating_ball_count == 4:
+                elif y > 1800 and x > 1170 and floating_ball_count == 4:
                     floating_ball_count = 5
-                elif y > 2000 and x > 1330 and floating_ball_count == 5:
+                elif y > 1800 and x > 1330 and floating_ball_count == 5:
                     floating_ball_count = 6
-                elif y > 2000 and x > 1500 and floating_ball_count == 6:
+                elif y > 1800 and x > 1500 and floating_ball_count == 6:
                     floating_ball_count = 7
                 #set ke-3
-                elif x > 2000 and y < 1690 and floating_ball_count == 7:
+                elif x > 1800 and y < 1690 and floating_ball_count == 7:
                     floating_ball_count = 8
-                elif x > 2000 and y < 1290 and floating_ball_count == 8:
+                elif x > 1800 and y < 1290 and floating_ball_count == 8:
                     floating_ball_count = 9
-                elif x > 2000 and y < 920 and floating_ball_count == 9:
+                elif x > 1800 and y < 920 and floating_ball_count == 9:
                     floating_ball_count = 10
 
             df = pd.DataFrame(table_entries)
