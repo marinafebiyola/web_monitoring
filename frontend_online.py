@@ -34,6 +34,38 @@ st.sidebar.markdown('<h4 class="sidebar-text">NAVIGASI LINTASAN</h4>', unsafe_al
 path = st.sidebar.radio("", ["Lintasan A ⚓", "Lintasan B ⚓"])
 start_button = st.sidebar.button("START BUTTON", key="start_monitoring_button")
 
+def get_github_files(repo_url):
+    # Format URL untuk mengakses API GitHub untuk melihat isi repositori
+    api_url = repo_url.replace("https://github.com", "https://api.github.com/repos") + "/contents/"
+    response = requests.get(api_url)
+    
+    if response.status_code == 200:
+        return response.json()  # Mengembalikan daftar file dalam repositori
+    else:
+        st.write("Gagal mengakses repositori. Pastikan URL repositori benar.")
+        return []
+
+# URL repositori GitHub yang akan diperiksa
+repo_url = "https://github.com/marinafebiyola/web_monitoring"
+
+# Memeriksa isi repositori
+files = get_github_files(repo_url)
+
+# Variabel untuk menyimpan URL gambar sbox.png jika ditemukan
+image_url = None
+
+# Mencari file sbox.png di daftar file repositori
+for file in files:
+    if file["name"] == "sbox.png":
+        image_url = file["download_url"]
+        break
+
+# Menampilkan gambar jika ditemukan
+if image_url:
+    st.image(image_url, caption='Gambar sbox.png', use_container_width=True)
+else:
+    st.write("File sbox.png tidak ditemukan di repositori.")
+
 #Header
 col1, col2, col3, col4 = st.columns([1,4,4,1])
 with col1:
@@ -333,7 +365,7 @@ def update_plot():
                 if not finished :
                     if nilai_x == 0 and nilai_y == 0 and not st.session_state.start_displayed:
                         st.session_state.start_displayed = True
-                        st.sidebar.markdown("<h6 class='mission-text'>START</h6>", unsafe_allow_html=True)
+                        st.sidebar.markdown("<h4 class='mission-text'>START</h4>", unsafe_allow_html=True)
                         event = "Start"
                         entry = {
                             'Day': day,
@@ -353,7 +385,7 @@ def update_plot():
                     if (path == "Lintasan A ⚓" and x > 2100 and y < 165 and not st.session_state.finish_displayed) or (path == "Lintasan B ⚓" and x < 415 and y < 165 and not st.session_state.finish_displayed):
                         if st.session_state.start_displayed and floating_ball_count == 10:
                             st.session_state.finish_displayed = True
-                            st.sidebar.markdown("<h6 class='mission-text'>FINISH</h6>", unsafe_allow_html=True)
+                            st.sidebar.markdown("<h4 class='mission-text'>FINISH</h4>", unsafe_allow_html=True)
                             event = "Finish"
                             entry = {
                                 'Day': day,
@@ -388,43 +420,43 @@ def update_plot():
 
                     if floating_ball_count == 1 and not st.session_state.floating_1:
                         st.session_state.floating_1 = True
-                        st.sidebar.markdown(f"<h6 class='mission-text'>FLOATING BALL {floating_ball_count}</h6>", unsafe_allow_html=True)
+                        st.sidebar.markdown(f"<h4 class='mission-text'>FLOATING BALL {floating_ball_count}</h4>", unsafe_allow_html=True)
 
                     if floating_ball_count == 2 and not st.session_state.floating_2:
                         st.session_state.floating_2 = True
-                        st.sidebar.markdown(f"<h6 class='mission-text'>FLOATING BALL {floating_ball_count}</h6>", unsafe_allow_html=True)
+                        st.sidebar.markdown(f"<h4 class='mission-text'>FLOATING BALL {floating_ball_count}</h4>", unsafe_allow_html=True)
 
                     if floating_ball_count == 3 and not st.session_state.floating_3:
                         st.session_state.floating_3 = True
-                        st.sidebar.markdown(f"<h6 class='mission-text'>FLOATING BALL {floating_ball_count}</h6>", unsafe_allow_html=True)
+                        st.sidebar.markdown(f"<h4 class='mission-text'>FLOATING BALL {floating_ball_count}</h4>", unsafe_allow_html=True)
                     
                     if floating_ball_count == 4 and not st.session_state.floating_4:
                         st.session_state.floating_4 = True
-                        st.sidebar.markdown(f"<h6 class='mission-text'>FLOATING BALL {floating_ball_count}</h6>", unsafe_allow_html=True)
+                        st.sidebar.markdown(f"<h4 class='mission-text'>FLOATING BALL {floating_ball_count}</h4>", unsafe_allow_html=True)
 
                     if floating_ball_count == 5 and not st.session_state.floating_5:
                         st.session_state.floating_5 = True
-                        st.sidebar.markdown(f"<h6 class='mission-text'>FLOATING BALL {floating_ball_count}</h6>", unsafe_allow_html=True)
+                        st.sidebar.markdown(f"<h4 class='mission-text'>FLOATING BALL {floating_ball_count}</h4>", unsafe_allow_html=True)
 
                     if floating_ball_count == 6 and not st.session_state.floating_6:
                         st.session_state.floating_6 = True
-                        st.sidebar.markdown(f"<h6 class='mission-text'>FLOATING BALL {floating_ball_count}</h6>", unsafe_allow_html=True)
+                        st.sidebar.markdown(f"<h4 class='mission-text'>FLOATING BALL {floating_ball_count}</h4>", unsafe_allow_html=True)
 
                     if floating_ball_count == 7 and not st.session_state.floating_7:
                         st.session_state.floating_7 = True
-                        st.sidebar.markdown(f"<h6 class='mission-text'>FLOATING BALL {floating_ball_count}</h6>", unsafe_allow_html=True)
+                        st.sidebar.markdown(f"<h4 class='mission-text'>FLOATING BALL {floating_ball_count}</h4>", unsafe_allow_html=True)
 
                     if floating_ball_count == 8 and not st.session_state.floating_8:
                         st.session_state.floating_8 = True
-                        st.sidebar.markdown(f"<h6 class='mission-text'>FLOATING BALL {floating_ball_count}</h6>", unsafe_allow_html=True)
+                        st.sidebar.markdown(f"<h4 class='mission-text'>FLOATING BALL {floating_ball_count}</h4>", unsafe_allow_html=True)
                     
                     if floating_ball_count == 9 and not st.session_state.floating_9:
                         st.session_state.floating_9 = True
-                        st.sidebar.markdown(f"<h6 class='mission-text'>FLOATING BALL {floating_ball_count}</h6>", unsafe_allow_html=True)
+                        st.sidebar.markdown(f"<h4 class='mission-text'>FLOATING BALL {floating_ball_count}</h4>", unsafe_allow_html=True)
 
                     if floating_ball_count == 10 and not st.session_state.floating_10:
                         st.session_state.floating_10 = True
-                        st.sidebar.markdown(f"<h6 class='mission-text'>FLOATING BALL {floating_ball_count}</h6>", unsafe_allow_html=True)
+                        st.sidebar.markdown(f"<h4 class='mission-text'>FLOATING BALL {floating_ball_count}</h4>", unsafe_allow_html=True)
 
 
             except (TypeError, KeyError) as e:
@@ -441,7 +473,7 @@ def update_plot():
 if start_button:
     st.session_state.monitoring_active = True
     st.sidebar.markdown('<style>div.stButton > button {background-color: #2E7431; color: white;}</style>', unsafe_allow_html=True)
-    st.sidebar.markdown("<h6 class='mission-text'>PREPARING</h6>", unsafe_allow_html=True)
+    st.sidebar.markdown("<h4 class='mission-text'>PREPARING</h4>", unsafe_allow_html=True)
     st.text("Monitoring started...")
     while True:
         update_plot()
